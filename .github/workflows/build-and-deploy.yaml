@@ -16,15 +16,15 @@ jobs:
             dotnet-version: ${{ env.NETCORE_VERSION }}
         - name: Restore
           run: |
-            cd advancedbookstore
+            cd wwwroot/AdvancedBookStore
             dotnet restore
         - name: Build
           run: |
-            cd advancedbookstore
+            cd wwwroot/AdvancedBookStore
             dotnet build --no-restore
         - name: Publish
           run: |
-            cd advancedbookstore
+            cd wwwroot/AdvancedBookStore
             dotnet publish --configuration Release --output ${{ env.AZURE_WEBAPP_PACKAGE_NAME }}
         - name: Deploy to Azure
           uses: azure/webapps-deploy@v2

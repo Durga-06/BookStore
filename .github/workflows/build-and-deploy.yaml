@@ -1,0 +1,34 @@
+name: "Build and Deploy"
+on: [push, workflow_dispatch]
+env:
+  AZURE_WEBAPP_NAME: AdvancedBookStore
+  AZURE_WEBAPP_PACKAGE_NAME: "../published"
+  NETCORE_VERSION: "6.0"
+jobs:
+    build:
+      name: Build and Deploy
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: Set up dotnet Core ${{ env.NETCORE_VERSION }}
+          uses: actions/setup-dotnet@v1
+          with:
+            dotnet-version: ${{ env.NETCORE_VERSION }}
+        - name: Restore
+          run: |
+            cd AdvancedBookStore
+            dotnet restore
+        - name: Build
+          run: |
+            cd AdvancedBookStore
+            dotnet build --no-restore
+        - name: Publish
+          run: |
+            cd AdvancedBookStore
+            dotnet publish --configuration Release --output ${{ env.AZURE_WEBAPP_PACKAGE_NAME }}
+        - name: Deploy to Azure
+          uses: azure/webapps-deploy@v2
+          with:
+            app-name: ${{ env.AZURE_WEBAPP_NAME }}
+            publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+            package: ./published
